@@ -2,8 +2,12 @@
 
 DuckDuckGo search assistant using Streamlit and OpenAI's API. The assistant allows users to input a search query, fetch results from DuckDuckGo, and display them in a user-friendly interface.
 
-
+## Web UI
 ![Screenshot](static/images/screenshot.PNG)
+
+
+## Streamlit UI
+![Screenshot](static/images/screenshot2.PNG)
 
 
 ## Prerequisites
