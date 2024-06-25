@@ -43,6 +43,7 @@ Respect user privacy and confidentiality when handling uploaded documents.""",
     name="Web Search Assistant",
     tools=[
         {"type": "code_interpreter"},
+        {"type": "file_search"},
         {
             "type": "function",
             "function": {

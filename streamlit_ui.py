@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 import time
-from chat_with_assistant import chat_with_assistant, upload_file
+from test import chat_with_assistant
 from openai import OpenAI
 import os
 import dotenv
@@ -46,9 +46,9 @@ if prompt:
 
     # Handle file upload
     if file:
-        with open(f"{file.name}", "wb") as f:
+        with open(f"temp/{file.name}", "wb") as f:
             f.write(file.getbuffer())
-        file_path = f"{file.name}"
+        file_path = f"temp/{file.name}"
     else:
         file_path = None
 

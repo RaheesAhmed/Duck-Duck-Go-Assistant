@@ -3,13 +3,14 @@ import time
 import json
 import dotenv
 from openai import OpenAI
+import asyncio
 from duck_duck_go import get_text_results, get_images_results
 from scrape_url import scrape_url
 
 dotenv.load_dotenv()
 
 # Initialize API client
-api_key = os.getenv("OPEN_API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
 assistant_id = os.getenv("OPENAI_ASSISTANT_ID")
 client = OpenAI(api_key=api_key)
 
@@ -21,8 +22,105 @@ def upload_file(file_path):
     return uploaded_file.id
 
 
+async def scrape_and_create_vector_store(url):
+    # Step 1: Scrape the URL content
+    content = await scrape_url(url)
+
+    # Save content to file
+    filename = "scraped_content.txt"
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(content)
+
+    # Step 2: Upload the content as a file
+    with open(filename, "rb") as file:
+        response = client.files.create(file=file, purpose="assistants")
+        file_id = response.id
+
+    # Step 3: Create a vector store with the uploaded file
+    response = client.beta.vector_stores.create(
+        name="ScrapedContentStore", file_ids=[file_id]
+    )
+    vector_store_id = response.id
+
+    # Step 4: Update the assistant with the new vector store
+    client.beta.assistants.update(
+        assistant_id,
+        tools=[
+            {"type": "code_interpreter"},
+            {"type": "file_search"},
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_text_results",
+                    "description": "Search DuckDuckGo if required.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "The search query string.",
+                            }
+                        },
+                        "required": ["query"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_images_results",
+                    "description": "Search DuckDuckGo for images",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "The search query string.",
+                            }
+                        },
+                        "required": ["query"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "scrape_url",
+                    "description": "Scrape the content of a webpage given its URL.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "url": {
+                                "type": "string",
+                                "description": "The URL of the webpage to scrape.",
+                            }
+                        },
+                        "required": ["url"],
+                    },
+                },
+            },
+        ],
+        tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}},
+    )
+    return "The content from the URL has been scraped, uploaded, and attached to the assistant. You can now ask questions about it."
+
+
 def chat_with_assistant(user_query, file_path=None, thread_id=None):
     try:
+        # Check if the user query contains a request to scrape a URL
+        if "scrape" in user_query and "http" in user_query:
+            # Extract the URL from the user query
+            url = user_query.split(" ")[-1]
+
+            # Handle the scraping and vector store creation
+            asyncio.run(scrape_and_create_vector_store(url))
+
+            # Notify the user that the scraping is complete and they can chat with the assistant
+            return "The content from the URL has been scraped and processed. You can now ask questions about it."
+
+        # remove the scraped file
+        if os.path.exists("scraped_content.txt"):
+            os.remove("scraped_content.txt")
 
         # Upload file if path is provided
         file_id = upload_file(file_path) if file_path else None
@@ -30,7 +128,6 @@ def chat_with_assistant(user_query, file_path=None, thread_id=None):
         if thread_id is None:
             print("Creating new thread...")
             thread = client.beta.threads.create()
-
             thread_id = thread.id
             print(f"New thread created with ID: {thread_id}")
         else:
@@ -38,7 +135,12 @@ def chat_with_assistant(user_query, file_path=None, thread_id=None):
 
         # Prepare message attachments if file is uploaded
         attachments = (
-            [{"file_id": file_id, "tools": [{"type": "code_interpreter"}]}]
+            [
+                {
+                    "file_id": file_id,
+                    "tools": [{"type": "code_interpreter"}, {"type": "file_search"}],
+                }
+            ]
             if file_id
             else []
         )
@@ -126,5 +228,5 @@ def chat_with_assistant(user_query, file_path=None, thread_id=None):
 
 
 # Example usage
-# user_query = "search the openai updates"
-# chat_with_assistant(user_query)
+# user_query = "scrape http://example.com"
+# print(chat_with_assistant(user_query))
