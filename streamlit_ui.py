@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 import time
-from test import chat_with_assistant
+from chat_with_assistant import chat_with_assistant
 from openai import OpenAI
 import os
 import dotenv
