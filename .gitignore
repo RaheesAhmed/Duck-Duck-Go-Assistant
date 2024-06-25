@@ -2,3 +2,7 @@
 __pycache__
 .env
 /old
+test.py
+code.py
+delete_vectorstore.py
+coding.py

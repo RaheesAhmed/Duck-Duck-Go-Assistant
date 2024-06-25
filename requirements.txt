@@ -2,3 +2,9 @@ streamlit
 python-dotenv
 openai
 duckduckgo-search
+langchain
+langchain-openai
+beautifulsoup4
+langchain_community
+playwright 
+html2text

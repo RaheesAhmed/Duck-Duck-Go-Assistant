@@ -1,6 +1,6 @@
 # DUCK DUCK GO Search Assistant
 
-DuckDuckGo search assistant using Streamlit and OpenAI's API. The assistant allows users to input a search query, fetch results from DuckDuckGo, and display them in a user-friendly interface.
+DuckDuckGo search assistant using Streamlit and OpenAI's API. The assistant allows users to input a search query, fetch results from DuckDuckGo, and display them in a user-friendly interface scrape the url.
 
 ## Web UI
 ![Screenshot](static/images/screenshot.PNG)
@@ -66,6 +66,7 @@ duckduckgo-search-assistant/
 ├── chat_with_assistant.py
 ├── duck_duck_go.py
 ├── main.py
+├── scrape_url.py
 ├── .env
 └── README.md
 ```
@@ -80,3 +81,5 @@ This script handles interaction with the OpenAI assistant.
 `streamlit_ui.py`
 This is the main Streamlit application script.
 
+`scrape_url`
+This will scrape the website on given URL.

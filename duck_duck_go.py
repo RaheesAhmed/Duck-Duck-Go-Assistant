@@ -29,31 +29,13 @@ def search_duckduckgo_images(query):
     return search_results
 
 
-def get_text_results(query_text):
+def get_text_results(query):
     # Perform text search
-    text_results = search_duckduckgo_text(query_text)
-    print("Text Search Results:")
-    for result in text_results:
-        print(f"Title: {result['title']}")
-        print(f"URL: {result['url']}")
-        print(f"Snippet: {result['snippet']}\n")
-
+    text_results = search_duckduckgo_text(query)
     return text_results
 
 
-def get_images_results(image_query):
+def get_images_results(query):
     # Perform image search
-    image_results = search_duckduckgo_images(image_query)
-    print("Image Search Results:")
-    for result in image_results:
-        print(f"Image URL: {result['image_url']}")
-        print(f"Thumbnail URL: {result['thumbnail_url']}\n")
-
+    image_results = search_duckduckgo_images(query)
     return image_results
-
-
-# Example usage
-# query_text = "OpenAI latest updates"
-# query_image = "OpenAI logo"
-# text_results = get_text_results(query_text)
-# image_results = get_images_results(query_image)
