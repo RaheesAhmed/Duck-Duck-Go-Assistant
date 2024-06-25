@@ -6,5 +6,6 @@ langchain
 langchain-openai
 beautifulsoup4
 langchain_community
-playwright 
 html2text
+playwright install
+

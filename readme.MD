@@ -43,7 +43,12 @@ python -m venv venv
 
 Install the required packages:
 ```
-pip install streamlit openai duckduckgo-search python-dotenv
+pip install streamlit openai duckduckgo-search python-dotenv langchain langchain-openai beautifulsoup4 langchain_community html2text
+```
+
+after installing above install playwright package:
+```
+playwright install
 ```
 
 Create a .env file in the project root and add your OpenAI API key and Assistant ID:
@@ -53,9 +58,9 @@ OPEN_API_KEY=your_openai_api_key
 OPENAI_ASSISTANT_ID=your_assistant_id
 ```
 ## Usage
-Run the `main.py` to use the Assistant with web UI
+use the streamlit you can run the `streamlit run streamlit_ui.py`
 
-if you want to use the streamlit you can run the `streamlit run streamlit_ui.py`
+or Run the `main.py` to use the Assistant with web UI
 
 
 ## Project Structure
